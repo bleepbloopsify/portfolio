@@ -1,0 +1,58 @@
+version: '3'
+
+
+services:
+  traefik:
+    image: traefik
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - ./traefik/acme.json:/etc/traefik/acme/acme.json
+      - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=false"
+
+  api:
+    user: www-data
+    image: api:latest
+    build:
+      context: ./api
+
+    environment:
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=db
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.backend=api"
+
+    depends_on: 
+      - db
+  
+  db:
+    user: www-data
+
+    image: postgres:11.2
+
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=db
+
+    volumes:
+      - .data/:/var/lib/postgresql/data
+  
+  web:
+    user: www-data
+    image: web:latest
+    build:
+      context: ./web
+    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.backend=web"

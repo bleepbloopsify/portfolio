@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Configuring application";
+
+echo "Configuring traefik's acme.json";
+
+if [ ! -f traefik/acme.json ]; then
+  touch traefik/acme.json;
+  chmod 600 traefik/acme.json;
+fi;
+
+echo "Configured. Now use docker-compose to run everything";
