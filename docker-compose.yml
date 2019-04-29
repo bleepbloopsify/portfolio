@@ -34,7 +34,7 @@ services:
       - db
   
   db:
-    user: www-data
+    # user: www-data
 
     image: postgres:11.2
 
@@ -42,6 +42,9 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=db
+
+    labels:
+      - "traefik.enable=false"
 
     volumes:
       - .data/:/var/lib/postgresql/data
@@ -56,3 +59,16 @@ services:
       - "traefik.enable=true"
       - "traefik.port=8080"
       - "traefik.backend=web"
+    
+  migrations:
+    image: migrations:latest
+    build:
+      context: ./migrations
+    
+    command: /bin/true
+
+    labels:
+      - "traefik.enable=false"
+    
+    volumes:
+      - ./migrations:/opt/

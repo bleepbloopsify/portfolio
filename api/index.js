@@ -6,6 +6,7 @@ const cors = require('koa2-cors');
 const app = new Koa();
 const router = new Router();
 
+const server = require('./schema');
 
 router.get('/', async ctx => {
 
@@ -19,6 +20,7 @@ router.get('/', async ctx => {
 
 
 app.use(logger());
+server.applyMiddleware({ app }); // /graphql
 
 app.use(cors());
 app.use(router.routes());
