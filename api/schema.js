@@ -4,7 +4,8 @@ const { Accounts } = require('./models');
 
 const typeDefs = gql`
   type Query {
-    account(id: ID!): Account
+    account(id: Int): Account
+    hello: String
   }
 
   type Account {
@@ -15,11 +16,10 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    account: async id => {
-      console.log(id);
-
-      return Accounts.getAccount({ id });
+    account: async (_, args) => {
+      return await Accounts.getAccount(args);
     },
+    hello: () => "Hello World",
   },
 };
 
