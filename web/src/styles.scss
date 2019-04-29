@@ -1,0 +1,10 @@
+@import './colors.scss';
+
+body {
+  background-color: $background_color;
+  color: $text_color;
+}
+
+.card {
+  background-color: $light_bg_color;
+}

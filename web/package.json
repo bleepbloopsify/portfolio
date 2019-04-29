@@ -11,7 +11,9 @@
     "@fortawesome/free-regular-svg-icons": "^5.8.1",
     "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "apollo-boost": "^0.3.1",
     "axios": "^0.18.0",
+    "graphql": "^14.2.1",
     "koa": "^2.7.0",
     "koa-helmet": "^4.1.0",
     "koa-logger": "^3.2.0",
@@ -19,7 +21,8 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.0",
-    "koa2-cors": "^2.0.6"
+    "koa2-cors": "^2.0.6",
+    "react-apollo": "^2.5.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",

@@ -10,3 +10,8 @@ exports.getAccount = function(account) {
     .where(account)
     .first();
 }
+
+exports.fetchAll = function() {
+  return knex('accounts')
+    .select('*');
+}

@@ -6,6 +6,7 @@ const typeDefs = gql`
   type Query {
     account(id: Int): Account
     hello: String
+    accounts: [Account]
   }
 
   type Account {
@@ -20,6 +21,9 @@ const resolvers = {
       return await Accounts.getAccount(args);
     },
     hello: () => "Hello World",
+    accounts: () => {
+      return Accounts.fetchAll();
+    },
   },
 };
 
