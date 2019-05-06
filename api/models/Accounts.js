@@ -1,17 +1,12 @@
 'use strict';
 
-const knex = require('../db');
+const Model  = require('./Model');
 
+class Accounts extends Model {
+    static get tableName() {
+      return 'accounts';
+    }
 
-exports.getAccount = function(account) {
-
-  return knex('accounts')
-    .select('*')
-    .where(account)
-    .first();
 }
 
-exports.fetchAll = function() {
-  return knex('accounts')
-    .select('*');
-}
+module.exports = Accounts;

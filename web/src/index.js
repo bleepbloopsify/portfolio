@@ -1,44 +1,31 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { render } from 'react-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+import CSSBaseline from '@material-ui/core/CssBaseline';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import purple from '@material-ui/core/colors/purple';
 
-import { getSuccess } from './api';
-
-import ResponsiveButton from './components/ResponsiveButton';
-import AccountList from './components/AccountList';
-
-import './styles.scss';
+import App from './components/App';
 
 const client = new ApolloClient({
   uri: APIHOST + '/graphql',
 });
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-  }
 
-  render() {
-    return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-9">
-            <h1>Hello There</h1>
-            <ResponsiveButton onClick={getSuccess}>Hit API</ResponsiveButton>
-          </div>
-          <div className="col-md-3">
-            <AccountList />
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: purple[500] }, // Purple and green play nicely together.
+    secondary: { main: '#11cb5f' }, // This is just green.A700 as hex.
+  },
+  typography: { useNextVariants: true },
+});
 
 render(
   <ApolloProvider client={client}>
-    <App />
+    <MuiThemeProvider theme={theme}>
+      <App />
+    </MuiThemeProvider>
   </ApolloProvider>,
   document.getElementById('app')
 );

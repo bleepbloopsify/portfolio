@@ -28,10 +28,20 @@ app.use(helmet.contentSecurityPolicy({
     defaultSrc: [
       "'self'", 
     ],
-    styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com', "'unsafe-inline'"],
+    styleSrc: [
+      "'self'", 
+      'maxcdn.bootstrapcdn.com', 
+      'fonts.googleapis.com', 
+      "'unsafe-inline'"],
     scriptSrc: [
       "'self'",
       process.env.NODE_ENV == 'development' ? "'unsafe-eval'" : "",
+      'code.jquery.com',
+      'cdnjs.cloudflare.com',
+      'stackpath.bootstrapcdn.com',
+    ],
+    fontSrc: [
+      'fonts.gstatic.com',
     ],
     connectSrc: [
       process.env.APIHOST || 'https://api.localhost',

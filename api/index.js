@@ -18,6 +18,13 @@ router.get('/', async ctx => {
   };
 });
 
+app.use(async (ctx, next) => {
+  ctx.account = {
+    id: 1,
+  };
+
+  await next();
+});
 
 app.use(logger());
 server.applyMiddleware({ app }); // /graphql
