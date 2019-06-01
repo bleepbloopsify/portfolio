@@ -19,3 +19,15 @@ exports.all = async params => {
     .query()
     .where(params);
 }
+
+exports.deposit = async (rocks) => {
+  return Promise.all(rocks.map(async ({ account_id, name, count }) => {
+    return Rocks
+      .query()
+      .where({ account_id, name })
+      .increment('count', count)
+      .returning('*')
+      .first()
+      .skipUndefined();
+  }));
+}

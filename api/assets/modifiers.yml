@@ -1,0 +1,46 @@
+modifiers:
+  - text: "Grants more power"
+    key: "flat_power"
+    likelihood: 90
+    sequence: 1
+    tiers:
+      - tier: 1
+        max: 1000
+        min: 900
+      - tier: 2
+        max: 900
+        min: 800
+      - tier: 3
+        max: 800
+        min: 700
+      - tier: 4
+        max: 700
+        min: 600
+      - tier: 5
+        max: 600
+        min: 500
+  - text: "Grants percent increased power"
+    key: "percent_increased_power"
+    sequence: 2
+    likelihood: 50
+    tiers:
+      - tier: 1
+        max: 200
+        min: 150
+      - tier: 2
+        max: 150
+        min: 100
+      - tier: 3
+        max: 100
+        min: 50
+  - text: "Grants percent more power"
+    key: "percent_more_power"
+    likelihood: 10
+    sequence: 3
+    tiers:
+      - tier: 1
+        max: 100
+        min: 90
+      - tier: 2
+        max: 80
+        min: 50

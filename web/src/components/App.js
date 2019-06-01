@@ -4,8 +4,8 @@ import CSSBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-import Clicker from './Clicker';
-import Rocks from './Rocks';
+import AuthenticationWrapper from './AuthenticationWrapper';
+import Game from './Game/Game';
 
 const styles = theme => {
   return {
@@ -31,13 +31,9 @@ class App extends Component {
       <Fragment>
         <CSSBaseline />
         <div className={classes.root}>
-          <Grid container spacing={24}>
-            <Grid item xs={6}>
-              <Typography variant="h1">Rocks</Typography>
-              <Clicker />
-            </Grid>
-            <Grid item xs={6}><Rocks /></Grid>
-          </Grid>
+          <AuthenticationWrapper>
+            <Game />
+          </AuthenticationWrapper>
         </div>
       </Fragment>
     )

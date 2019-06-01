@@ -1,0 +1,6 @@
+items:
+  - name: Stone Pickaxe
+    power: 100
+    costs: 
+      - name: 'stone'
+        cost: 1

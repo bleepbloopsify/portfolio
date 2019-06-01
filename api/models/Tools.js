@@ -1,16 +1,11 @@
 'use strict';
 
-const knex = require('../db');
+const Model = require('./Model');
 
-exports.insertTool = function(tool) {
-  return knex('tools')
-    .insert(tool)
-    .returning('*');
-};
+class Tools extends Model {
+  static get tableName() {
+    return 'tools';
+  }
+}
 
-exports.getTools = function(account) {
-  const { id: account_id } = account;
-  return knex('tools')
-    .where({ account_id });
-};
-
+module.exports = Tools;

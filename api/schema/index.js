@@ -1,49 +1,44 @@
-const { ApolloServer, gql } = require('apollo-server-koa');
+const { ApolloServer, gql, AuthenticationError } = require('apollo-server-koa');
+const _ = require('lodash');
 
-const { Tools } = require('../models');
-const { Accounts, Rocks } = require('../controllers');
+const { Tools, Rocks } = require('../controllers');
+
+const Account = require('./Account');
 
 const typeDefs = gql`
   type Query {
-    me: Account
-    account(id: Int): Account
     hello: String
-    accounts: [Account]
     rocks: [Rock]
+    tools: [Tool]
+    store: [StoreItem]
+  }
+
+  type StoreItem {
+    name: String!
+    costs: [StorePrice!]!
+  }
+
+  type StorePrice {
+    name: String!
+    cost: Int!
   }
 
   type Mutation {
-    login(account: loginInput): String
-    register(account: registerInput): Account
-
     addTool(rocks: [Int]): Tool
-    mineRock(tool_id: Int): Rock
-  }
-
-  input loginInput {
-    email: String!
-    password: String!
-  }
-
-  input registerInput {
-    username: String!
-    email: String!
-    password: String!
-  }
-
-  type Account {
-    id: Int
-    username: String
-    email: String
-    rocks: [Rock]
-    tools: [Tool]
+    mineRock(tool_id: Int): [Rock]
+    purchaseTool(shop_idx: Int): Tool
+    deleteTool(tool_id: Int): Tool
   }
 
   type Rock {
-    id: Int
-    account_id: Int
+    id: Int!
+    account_id: Int!
     name: String!
-    value: Int!
+    count: Int!
+  }
+
+  type Modifier {
+    text: String!
   }
 
   type Tool {
@@ -51,45 +46,36 @@ const typeDefs = gql`
     account_id: Int
     name: String!
     power: Int!
+    modifiers: [Modifier]!
   }
 `;
 
 
 const resolvers = {
   Query: {
-    me: async (_, __, ctx) => {
-      const { account } = ctx;
-
-      return Accounts.get(account);
-    },
-    account: async (_, args) => {
-      return await Accounts.get(args);
-    },
     hello: () => "Hello World",
-    accounts: () => {
-      return Accounts.fetchAll();
-    },
     rocks: async (_, __, ctx) => {
       const { account } = ctx;
+      if (!account) throw new AuthenticationError("No Login");
 
       return Rocks.all({ account_id: account.id });
+    },
+    tools: async (_, __, ctx) => {
+      const { account } = ctx;
+      if (!account) throw new AuthenticationError("No Login");
+
+      const tools = await Tools.all({ account_id: account.id });
+      return tools;
+    },
+    store: (_) => {
+      return Tools.getStore();
     }
   },
   Mutation: {
-    login: async (_, args, ctx) => {
-      const { account } = args;
-
-      return Accounts.login(account);
-    },
-    register: async (_, args, ctx) => {
-      const { account } = args;
-
-      return Accounts.createAccount(account);
-    },
-
     addTool: async (_, args, ctx) => {
       const { rocks } = args;
       const { account } = ctx;
+      if (!account) throw new AuthenticationError("No Login");
 
       const tool = {
         account_id: account.id,
@@ -97,42 +83,47 @@ const resolvers = {
         power: 1,
       };
 
-      const [created] = await Tools.insertTool(tool);
+      const created = await Tools.insert(tool);
 
       return created;
     },
 
-    mineRock: async (_, args, ctx, info) => {
+    mineRock: async (_, args, ctx) => {
       const { tool_id } = args;
-      const { account = null } = ctx;
+      const { account } = ctx;
+      if (!account) throw new AuthenticationError("No Login");
 
-      // TODO: fetch power from tool
-      console.log("[mineRock] Creating rock for account ", account);
+      return await Tools.mineRock(account, { id: tool_id });
+    },
 
-      const rock = {
-        account_id: account.id,
-        name: 'stone',
-        value: 1,
-      };
+    purchaseTool: async (_, args, ctx) => {
+      const { account } = ctx;
+      if (!account) throw new AuthenticationError("No Login");
 
-      const created = await Rocks.insert(rock);
-      return created;
+      return await Tools.purchaseTool(account, args);
+    },
+
+    deleteTool: async (_, args, ctx) => {
+      const { account } = ctx;
+      if (!account) throw new AuthenticationError("No Login");
+
+      return await Tools.deleteTool(account, args);
     }
   },
 
   Account: {
     rocks: async account => {
-      return await Rocks.all(account);
+      return await Rocks.all({ account_id: account.id});
     },
     tools: async account => {
-      return await Tools.getTools(account);
+      return await Tools.all({ account_id: account.id});
     },
   }
 };
 
 
 module.exports = new ApolloServer({ 
-  typeDefs, 
-  resolvers, 
+  typeDefs: [typeDefs, Account.typeDef], 
+  resolvers: _.merge(resolvers, Account.resolvers), 
   context: ({ ctx }) => ctx,
 });

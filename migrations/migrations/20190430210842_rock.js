@@ -6,7 +6,7 @@ exports.up = async function(knex, Promise) {
     table.integer('account_id').unsigned().notNullable();
     
     table.text('name').notNullable().defaultTo('stone');
-    table.bigInteger('value').unsigned().notNullable().defaultTo(0);
+    table.integer('count').unsigned().defaultTo(1);
 
     table.foreign('account_id').references('id').inTable('accounts');
   });
@@ -16,9 +16,9 @@ exports.up = async function(knex, Promise) {
 
     table.integer('account_id').unsigned().notNullable();
 
-    table.text('name').notNullable().defaultTo('pickaxe');
-    table.integer('power').unsigned().notNullable().defaultTo(0);
-    table.integer('count').unsigned().notNullable().defaultTo(0);
+    table.text('name').notNullable().defaultTo('pickaxe'); // this defines base for the item
+    table.integer('power').unsigned().notNullable().defaultTo(0); // this defines base power
+    table.jsonb('modifiers').notNullable().defaultTo('[]'); // this is a json array of modifiers
 
     table.foreign('account_id').references('id').inTable('accounts');
   });

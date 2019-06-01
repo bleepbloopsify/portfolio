@@ -25,6 +25,7 @@ const path = require('path');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
+  devtool: '#eval-source-map',
 	module: {
 		rules: [
 			{
@@ -90,6 +91,9 @@ module.exports = {
 		}
   },
   plugins: [
+    new webpack.LoaderOptionsPlugin({
+      debug: true
+    }),
     new webpack.DefinePlugin({
       APIHOST: JSON.stringify(process.env.APIHOST || 'https://api.localhost'),
     }),

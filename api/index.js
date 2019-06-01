@@ -8,6 +8,8 @@ const router = new Router();
 
 const server = require('./schema');
 
+const { verifyToken } = require('./controllers/Accounts');
+
 router.get('/', async ctx => {
 
   await new Promise((resolve) => {
@@ -18,18 +20,32 @@ router.get('/', async ctx => {
   };
 });
 
+app.use(logger());
+app.use(cors({ origin: '*' }));
+
+// app.use(async (ctx, next) => {
+
+//   await new Promise(resolve => {
+//     setTimeout(resolve, 1000);
+//   });
+
+//   await next();
+// });
+
 app.use(async (ctx, next) => {
-  ctx.account = {
-    id: 1,
-  };
+  if (ctx.headers.authorization) {
+    const token = ctx.headers.authorization.split(' ')[1];
+    try {
+      const { id } = await verifyToken(token);
+      ctx.account = { id };
+    } catch {}
+  }
 
   await next();
 });
 
-app.use(logger());
 server.applyMiddleware({ app }); // /graphql
 
-app.use(cors());
 app.use(router.routes());
 app.use(router.allowedMethods());
 

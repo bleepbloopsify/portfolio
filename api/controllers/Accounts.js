@@ -21,7 +21,7 @@ exports.createAccount = async ({ username, email, password }) => {
 
   console.log(created);
 
-  return returning;
+  return created;
 }
 
 exports.login = async({ email, password }) => {

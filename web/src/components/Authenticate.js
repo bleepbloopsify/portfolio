@@ -1,70 +1,29 @@
 import React, { Component, Fragment } from 'react';
-import { createPortal } from 'react-dom';
-import { gql } from 'apollo-boost';
-import { Query } from 'react-apollo';
+import Modal from '@material-ui/core/Modal';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
-import Modal from  './Modal';
+import Login from './Login';
 
 const STATE_LOGIN = 'login';
 const STATE_REGISTER = 'register';
 
-const REGISTER_ACCOUNT = gql`
-mutation {
-  registerAccount
-}
-`;
+const styles = theme => {
+  return {
+    root: {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      position: 'absolute',
+      width: theme.spacing.unit * 50,
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing.unit * 4,
+    },
+  };
+};
 
-class Login extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {};
-  }
-
-  onSubmit = async e => {
-    e.preventDefault();
-
-    console.log('Submitting');
-    console.log(this.state);
-  }
-
-  onChange = key => async e => {
-    this.setState({
-      [key]: e.target.value,
-    });
-  }
-
-  render() {
-    const { email = '', password = '' } = this.state;
-
-    return (
-      <form className="form">
-        <div className="form-control">
-          <label htmlFor="email">Email:</label>
-          <input 
-            type="text"
-            className="form-input" 
-            name="email"
-            value={email}
-            onChange={this.onChange('email')}
-            />
-        </div>
-        <div className="form-control">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            className="form-input"
-            name="password"
-            value={password}
-            onChange={this.onChange('password')} />
-        </div>
-      </form>
-    );
-  }
-}
-
-export default class Authenticate extends Component {
+class Authenticate extends Component {
 
   constructor(props) {
     super(props);
@@ -77,6 +36,7 @@ export default class Authenticate extends Component {
 
 
   render() {
+    const { classes } = this.props;
     const { open = false, state = STATE_LOGIN } = this.state;
 
     let body = null;
@@ -84,7 +44,7 @@ export default class Authenticate extends Component {
     switch (state) {
     case STATE_LOGIN:
       body = (
-        <Login />
+        <Login close={() => this.setState({ open: false })} />
       );
       break;
     case STATE_REGISTER:
@@ -105,10 +65,21 @@ export default class Authenticate extends Component {
     }
 
     return (
-      <Modal>
-        {body}
-      </Modal>
+      <Fragment>
+        <Button color="primary" variant="contained" onClick={() => this.setState({ open: true })}>Authenticate</Button>
+        <Modal
+          aria-labelledby="Authentication Modal"
+          aria-describedby="Login/Register here"
+          open={open}
+          onClose={() => this.setState({ open: false })}
+          >
+          <div className={classes.root}>
+            {body}
+          </div>
+        </Modal>
+      </Fragment>
     )
   }
-
 }
+
+export default withStyles(styles)(Authenticate);
