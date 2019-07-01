@@ -6,7 +6,6 @@ const faker = require('faker');
 
 const Rocks = require('./Rocks');
 const { Tools } = require('../models');
-const ModifierSelector = require('../models/Modifiers');
 
 const STORE = ymlreq('./assets/store.yml');
 
@@ -19,7 +18,7 @@ class _Tools {
 
   static async insert(tool) {
     return Tools.query().returning('*').insert(tool);
-  };
+  }
 
   static async all(params) {
     return Tools.query().where(params);
@@ -36,32 +35,41 @@ class _Tools {
         name: rock,
         count: _.random(0, tool.power),
       };
-    })
+    });
+
+    // TODO: make this pull from something less static (like a file)
+    // TODO: make this actually use the tool's modifiers
 
     const created = await Rocks.deposit(rocks);
 
     return created;
   }
 
-  static getStore() {
-    console.log(STORE);
-    return STORE.items;
-  }
-
+  /**
+   * This method will purchaes a tool for an account.
+   * This will purchase just the base tool, and the player can
+   * then craft anything they desire onto the tool.
+   * This is the starting point for most crafts, and can probably
+   * apply modifiers later on.
+   * This will only drop white bases.
+   * @param { id } account 
+   * @param {*} param1 
+   */
   static async purchaseTool(account, { shop_idx }) {
 
     const item = STORE.items[shop_idx];
     if (!item) throw new UserInputError('Item not found');
 
     const rocks = await Rocks.all({ account_id: account.id });
-    console.log(rocks);
-    console.log(item.costs);
 
     const tool = {
       account_id: account.id,
       name: faker.lorem.words(2),
       power: item.power,
-    }
+    };
+
+    // TODO: get cost of item from shop
+    // TODO: subtract cost of item from current account
 
     return await this.insert(tool);
   }
@@ -76,7 +84,5 @@ class _Tools {
   }
 }
 
-
-_Tools.getStore();
 
 module.exports = _Tools;

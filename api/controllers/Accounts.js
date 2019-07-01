@@ -5,7 +5,7 @@ const { Accounts } = require('../models');
 
 const  SALT_ROUNDS = 10;
 const JWT_SECRET = process.env.JWT_SECRET || 'keyboard cat';
-const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || 10 * 1000 * 60 * 60 // 10 hours
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || 10 * 1000 * 60 * 60; // 10 hours
 
 exports.createAccount = async ({ username, email, password }) => {
   const account = {
@@ -22,14 +22,14 @@ exports.createAccount = async ({ username, email, password }) => {
   console.log(created);
 
   return created;
-}
+};
 
 exports.login = async({ email, password }) => {
   
   const account = await Accounts
     .query()
     .where({ email })
-    .returning('*')
+    .returning('id, password, is_admin')
     .first();
 
   if (!account) throw new Error('Invalid email/password');
@@ -40,6 +40,7 @@ exports.login = async({ email, password }) => {
 
   const token = await jwt.sign({
     id: account.id,
+    is_admin: account.is_admin,
   }, JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRES_IN,
   });
@@ -63,4 +64,3 @@ exports.fetchAll = async params => {
     .skipUndefined()
     .where(params);
 };
-

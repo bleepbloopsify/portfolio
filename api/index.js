@@ -36,8 +36,8 @@ app.use(async (ctx, next) => {
   if (ctx.headers.authorization) {
     const token = ctx.headers.authorization.split(' ')[1];
     try {
-      const { id } = await verifyToken(token);
-      ctx.account = { id };
+      const { id, is_admin } = await verifyToken(token);
+      ctx.account = { id, is_admin };
     } catch {}
   }
 

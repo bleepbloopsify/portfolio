@@ -1,13 +1,10 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import  { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Modal from '@material-ui/core/Modal'
-import Button from '@material-ui/core/Button';
-import { Query, Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Typography } from '@material-ui/core';
 
-import { GET_TOOLS, MINE_ROCK, DELETE_TOOL, GET_ROCKS } from '../../queries';
+import { GET_TOOLS } from '../../queries';
 
 import Tool from './Tool';
 

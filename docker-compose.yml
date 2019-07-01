@@ -32,6 +32,7 @@ services:
 
     depends_on: 
       - db
+      - traefik
   
   db:
     # user: www-data
@@ -59,6 +60,10 @@ services:
       - "traefik.enable=true"
       - "traefik.port=8080"
       - "traefik.backend=web"
+
+    depends_on:
+      - api
+      - traefik
     
   migrations:
     image: migrations:latest

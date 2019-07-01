@@ -3,7 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
-import { Mutation } from 'react-apollo';
+
+import Currency from './Currency';
 
 const styles = theme => {
   return {
@@ -39,6 +40,8 @@ class CraftingWindow extends Component {
     return (
       <Fragment>
         {children(this.onOpen)}
+        {/* TODO: use the Holding API here to have items inside the modal be grabbable */}
+        {/* TODO: render a component that controls what the mouse looks like */}
         <Modal open={open} onClose={() => this.setState({ open: false })}>
           <Grid container spacing={8} className={classes.root}>
             <Grid item xs={12}>
@@ -48,7 +51,7 @@ class CraftingWindow extends Component {
               Item image and detais
             </Grid>
             <Grid item md={8}>
-              Rock list
+              <Currency />
             </Grid>
           </Grid>
         </Modal>

@@ -1,23 +1,27 @@
-const { gql, AuthenticationError } = require('apollo-server-koa');
+const { gql } = require('apollo-server-koa');
 
-const { Accounts } = require('../controllers');
+const { authd, admin } = require('./helpers');
+const { Accounts, Rocks, Tools } = require('../controllers');
 
-exports.typeDef = gql`
+exports.typeDefs = gql`
   type Account {
-    id: Int
-    username: String
-    email: String
+    id: Int!
+    username: String!
+    email: String! @private
     rocks: [Rock]
     tools: [Tool]
+    is_admin: Boolean @admin
   }
 
   extend type Query {
-    me: Account
+    me: Account!
+    users: [Account]
+    userByUsername(username: String!): Account 
   }
 
   extend type Mutation {
-    login(account: loginInput): String
-    register(account: registerInput): Account
+    login(account: loginInput!): String
+    register(account: registerInput!): Account
   }
 
   input loginInput {
@@ -34,12 +38,23 @@ exports.typeDef = gql`
 
 exports.resolvers = {
   Query: {
-    me: async (_, __, ctx) => {
+    me: authd(async (_, __, ctx) => {
       const { account } = ctx;
-      if (!account) throw new AuthenticationError('No Login');
 
       return Accounts.get(account);
-    },
+    }),
+    users: admin(async () => {
+      return Accounts.fetchAll();
+    }),
+    /**
+     * The reasoning here is that if you know someone's username,
+     * you should be able to find out a little bit more about them.
+     * 
+     * However, that information is heavily filtered.
+     */
+    userByUsername: authd(async(_, args) => {
+      return Accounts.get(args);
+    }),
   },
   Mutation: {
     login: async (_, { account }) => {
@@ -48,5 +63,14 @@ exports.resolvers = {
     register: async (_, { account }) => {
       return Accounts.createAccount(account);
     }
-  }
+  },
+
+  Account: {
+    rocks: async account => {
+      return await Rocks.all({ account_id: account.id});
+    },
+    tools: async account => {
+      return await Tools.all({ account_id: account.id});
+    },
+  },
 };
