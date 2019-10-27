@@ -14,6 +14,19 @@ extend type Mutation {
 
 `;
 
+/**
+ * Modifier looks like this:
+ * {
+ *    text: <description of what modifier does>
+ *    key:  <key into class array>
+ *    likelihood: <describes likelihood of picking this specific modifier>
+ *    sequence: <gives it an id>
+ *    tiers: []
+ * }
+ * 
+ * Modifier on tool should probably have just text, key, tier, ranges, and final values
+ */
+
 exports.resolvers = {
   Mutation: {
     applyCurrency: authd(async(_, args, ctx) => {
@@ -22,6 +35,7 @@ exports.resolvers = {
   
       const modifier = selectModifier();
       console.log(modifier);
+      // TODO: now select tier of modifier to apply
   
       const tool = await Tools.get({ id: tool_id });
   
