@@ -24,7 +24,7 @@ exports.createAccount = async ({ username, email, password }) => {
   return created;
 };
 
-exports.login = async({ email, password }) => {
+exports.login = async(cookies, { email, password }) => {
   
   const account = await Accounts
     .query()
@@ -45,7 +45,15 @@ exports.login = async({ email, password }) => {
     expiresIn: ACCESS_TOKEN_EXPIRES_IN,
   });
 
-  return token;
+  cookies.set('jwt', token, {
+    maxAge: ACCESS_TOKEN_EXPIRES_IN,
+    httpOnly: true,
+    overwrite: true,
+    secure: true,
+    sameSite: 'None',
+  });
+
+  return 'success';
 };
 
 exports.verifyToken = async token => jwt.verify(token, JWT_SECRET);

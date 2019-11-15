@@ -46,21 +46,13 @@ exports.resolvers = {
     users: admin(async () => {
       return Accounts.fetchAll();
     }),
-    /**
-     * The reasoning here is that if you know someone's username,
-     * you should be able to find out a little bit more about them.
-     * 
-     * However, that information is heavily filtered.
-     */
-    userByUsername: authd(async(_, args) => {
-      return Accounts.get(args);
-    }),
   },
   Mutation: {
-    login: async (_, { account }) => {
-      return Accounts.login(account);
+    login: async (_, { account }, { cookies }) => {
+      return Accounts.login(cookies, account);
     },
     register: async (_, { account }) => {
+      console.log(account);
       return Accounts.createAccount(account);
     }
   },

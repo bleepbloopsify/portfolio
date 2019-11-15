@@ -12,11 +12,7 @@ import App from './components/App';
 export const AUTH_TOKEN = 'auth-token';
 
 const link = new HttpLink({
-  uri: APIHOST + '/graphql',
-  fetch: (uri, options) => {
-    options.headers.authorization = `Bearer ${localStorage.getItem(AUTH_TOKEN)}`;
-    return fetch(uri, options);
-  }
+  uri: `${process.env.APIHOST}/graphql`,
 });
 
 const client = new ApolloClient({ link, cache: new InMemoryCache() });
